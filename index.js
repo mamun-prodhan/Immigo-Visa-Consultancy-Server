@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const app = express();
@@ -20,6 +20,7 @@ async function run(){
         const serviceCollection = client.db('assignment11').collection('services');
         const countryCollection = client.db('assignment11').collection('country');
 
+        // for country section
         app.get('/country', async(req, res) =>{
             const query = {}
             const cursor = countryCollection.find(query);
@@ -27,6 +28,7 @@ async function run(){
             res.send(country); 
         })
 
+        // 3 service for home page
         app.get('/services', async(req, res) =>{
             const query = {}
             const cursor = serviceCollection.find(query).limit(3);
@@ -35,12 +37,21 @@ async function run(){
             res.send(services);
         })
         
+        // all services for service page
         app.get('/allservices', async(req, res) =>{
             const query = {}
             const cursor = serviceCollection.find(query);
             // const cursor = serviceCollection.find(query,{"title":1,_id:0}).sort({"title":-1}).limit(3);
             const allservices = await cursor.toArray();
             res.send(allservices);
+        })
+
+        // single service details page
+        app.get('/details/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const service = await serviceCollection.findOne(query);
+            res.send(service);
         })
     }
     finally{
