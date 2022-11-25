@@ -70,9 +70,9 @@ async function run() {
         });
 
         // myreviews api==========
-        app.get('/myreviews', async(req, res) =>{
+        app.get('/myreviews', async (req, res) => {
             let query = {};
-            if(req.query.email){
+            if (req.query.email) {
                 query = {
                     email: req.query.email
                 }
@@ -88,12 +88,28 @@ async function run() {
             res.send(result);
         });
 
-        app.delete('/myreviews/:id', async(req, res) =>{
+        app.delete('/myreviews/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await reviewCollection.deleteOne(query);
             res.send(result);
-        })
+        });
+
+        app.put('/myreviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const data = req.body;
+            const updateDoc = {
+                $set: {
+                    "customer": data.customer,
+                    "email": data.email,
+                    "review": data.review
+                },
+            };
+            const result = await reviewCollection.updateOne(filter, updateDoc, options);
+            res.send(result)
+        });
 
     }
     finally {
