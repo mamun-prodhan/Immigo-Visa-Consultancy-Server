@@ -19,6 +19,7 @@ async function run(){
     try{
         const serviceCollection = client.db('assignment11').collection('services');
         const countryCollection = client.db('assignment11').collection('country');
+        const reviewCollection = client.db('assignment11').collection('reviews');
 
         // for country section
         app.get('/country', async(req, res) =>{
@@ -26,7 +27,7 @@ async function run(){
             const cursor = countryCollection.find(query);
             const country = await cursor.toArray();
             res.send(country); 
-        })
+        });
 
         // 3 service for home page
         app.get('/services', async(req, res) =>{
@@ -35,7 +36,7 @@ async function run(){
             // const cursor = serviceCollection.find(query,{"title":1,_id:0}).sort({"title":-1}).limit(3);
             const services = await cursor.toArray();
             res.send(services);
-        })
+        });
         
         // all services for service page
         app.get('/allservices', async(req, res) =>{
@@ -44,7 +45,7 @@ async function run(){
             // const cursor = serviceCollection.find(query,{"title":1,_id:0}).sort({"title":-1}).limit(3);
             const allservices = await cursor.toArray();
             res.send(allservices);
-        })
+        });
 
         // single service details page
         app.get('/details/:id', async(req, res) => {
@@ -52,7 +53,27 @@ async function run(){
             const query = {_id: ObjectId(id)};
             const service = await serviceCollection.findOne(query);
             res.send(service);
+        });
+
+        // all reviews api
+        app.get('/reviews', async(req, res) =>{
+            let query = {};
+            if(req.query.service){
+                query = {
+                    service: req.query.service
+                }
+            }
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
         })
+
+        app.post('/reviews', async(req, res) =>{
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        })
+
     }
     finally{
 
