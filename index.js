@@ -34,8 +34,7 @@ async function run() {
         app.get('/services', async (req, res) => {
             const query = {};
             
-            const cursor = serviceCollection.find(query).limit(-3);
-            // const cursor = serviceCollection.find(query,{"title":1,_id:0}).sort({"title":-1}).limit(3);
+            const cursor = serviceCollection.find(query).sort( { insertDate : -1} ).limit(3);
             const services = await cursor.toArray();
             res.send(services);
         });
@@ -51,7 +50,7 @@ async function run() {
         app.get('/allservices', async (req, res) => {
             const query = {}
             const cursor = serviceCollection.find(query);
-            // const cursor = serviceCollection.find(query,{"title":1,_id:0}).sort({"title":-1}).limit(3);
+            
             const allservices = await cursor.toArray();
             res.send(allservices);
         });
