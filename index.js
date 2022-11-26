@@ -32,12 +32,20 @@ async function run() {
 
         // 3 service for home page
         app.get('/services', async (req, res) => {
-            const query = {}
-            const cursor = serviceCollection.find(query).limit(3);
+            const query = {};
+            
+            const cursor = serviceCollection.find(query).limit(-3);
             // const cursor = serviceCollection.find(query,{"title":1,_id:0}).sort({"title":-1}).limit(3);
             const services = await cursor.toArray();
             res.send(services);
         });
+
+        // add service api
+        app.post('/services', async(req, res) =>{
+            const service = req.body;
+            const result = await serviceCollection.insertOne(service);
+            res.send(result);
+        })
 
         // all services for service page
         app.get('/allservices', async (req, res) => {
