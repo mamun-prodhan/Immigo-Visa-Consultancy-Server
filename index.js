@@ -64,7 +64,7 @@ async function run() {
             res.send(service);
         });
 
-        // all reviews api
+        // all reviews api==========
         app.get('/reviews', async (req, res) => {
             let query = {};
             if (req.query.service) {
@@ -72,12 +72,12 @@ async function run() {
                     service: req.query.service
                 }
             }
-            const cursor = reviewCollection.find(query);
+            const cursor = reviewCollection.find(query).sort( { insertDate : -1} );
             const reviews = await cursor.toArray();
             res.send(reviews);
         });
 
-        // myreviews api==========
+        // myreviews api
         app.get('/myreviews', async (req, res) => {
             let query = {};
             if (req.query.email) {
@@ -92,10 +92,10 @@ async function run() {
 
         app.post('/reviews', async (req, res) => {
             const review = req.body;
-            const result = await reviewCollection.insertOne(review);
+            const result = await reviewCollection.insertOne(review); 
             res.send(result);
         });
-
+          
         app.delete('/myreviews/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
